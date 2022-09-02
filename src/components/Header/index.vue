@@ -34,12 +34,15 @@
 import { ArrowRight } from '@element-plus/icons-vue'
 import {computed} from "vue";
 import {useRouter} from "vue-router";
+import useStore from "@/store/index.ts";
 //引入图片资源
 import avator from "@/assets/vue.svg"
-let imgUrl=new URL(avator,import.meta.url).href;
+let tempAvatar=useStore().userStore.avatar
+//如果没有从后端获取到,就使用本地
+let imgUrl=new URL((tempAvatar==null||tempAvatar=="")?avator:tempAvatar,import.meta.url).href
+
 //使用路由
 const $router=useRouter()
-import useStore from "@/store/index.ts";
 // 使用pinia状态管理
 const {tabStore,userStore}=useStore()
 //获取tablist里面的元素
@@ -52,9 +55,19 @@ const collapseMenu=()=>{
 }
 
 const logout = () => {
-  userStore.clearToken()
-  console.log("退出登录后数据,localStore",localStorage.getItem("token"),"---$store",userStore.token)
-  $router.push("/login")
+  /*ElMessageBox.confirm('您确定要退出登录吗?', '系统提示', {
+        confirmButtonText: '退出登录',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+  ).then(()=>{
+
+  }).catch(()=>{})*/
+  userStore.logout().then((res)=>{
+    console.log("退出登录后数据,---$store",userStore.token)
+    $router.push({name:"Login"})
+  })
+
   // location.href="/#/login"
 }
 </script>

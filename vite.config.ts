@@ -16,6 +16,16 @@ export default defineConfig({
       }
     }
   },
+  css:{
+    preprocessorOptions:{
+      less:{
+        modifyVars: {
+          hack: `true; @import (reference) "${resolve("src/assets/css/base.less")}";`,
+        },
+        javascriptEnabled: true,
+      }
+    }
+  },
   plugins: [
     vue(),
     //EL-plus按需导入

@@ -52,13 +52,16 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, reactive, ref} from "vue";
+import {getCurrentInstance, reactive, ref,watch} from "vue";
 import {useRouter} from "vue-router";
 import useStore from "@/store/index";
-import {login,getCaptchaImage} from "@/api";
+import {getCaptchaImage} from "@/api";
 const $router=useRouter()
 //使用pinia
 const {userStore}=useStore();
+// @ts-ignore
+const { proxy } = getCurrentInstance();
+
 const data=reactive({
   //验证码图片
   codeUrl:"",
@@ -75,34 +78,37 @@ const data=reactive({
     code:[{required:true,message:"验证码不能为空",trigger:"blur"}],
   }
 })
-const loginForm:any=ref(null);
+//直接访问某个地址,被拦截后,登陆后跳转至对应路由
+let redirect = proxy.$route.query.redirect;
+//为什么要监视,因为在redirect?page1 切换到 page2的时候,redirect不发生变化
+watch(
+    () => proxy.$route,
+    (newValue, oldValue) => {
+      console.log(newValue)
+      // console.log(oldValue)
+      redirect = newValue.query.redirect;
+      console.log("Login---redirect:",redirect)
+    },
+    { immediate: true }
+)
 const loginButton=()=>{
-  //获取表单对象每次先进行校验
-  loginForm.value.validate((valid:any)=>{
+  // 获取表单对象每次先进行校验
+  // @ts-ignore
+  proxy.$refs.loginForm.validate((valid:any)=>{
     //表单校验通过,才发送数据
     if (valid){
-      login(data.user).then((res)=>{
-        //保存数据(保存至pinia和本地)
-        userStore.setToken(res.data.token)
+      userStore.login(data.user).then((res)=>{
+        // console.log("---redirect:",redirect.value)
         //路由跳转
-        $router.push({name:"Main"})
+        $router.push({path:redirect||"/"})
       }).catch((error)=>{
+        //刷新验证码
         getCode()
       })
     }
-  })
-  /*login(data.user).then((res)=>{
-    console.log(res)
-  }).catch((error)=>{
-    console.log(error)
-  })*/
-  // const test=Mock.Random.guid()
-  //token应该从服务器获取
-  // userStore.setToken(data.user.userName)
-  // $store.commit("SETTOKEN",reactive_data.user.userName)
-  // console.log("login.vue中store存储的token",$store.state.user.token,"本地存储,",localStorage.getItem("token"))
-  // $router.push({name:"User"})
+  });
 }
+
 const getCode = () => {
   getCaptchaImage().then((res)=>{
     data.codeUrl=res.data.codeImage;
@@ -111,6 +117,7 @@ const getCode = () => {
     console.log(error)
   })
 }
+
 getCode()
 </script>
 

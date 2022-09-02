@@ -24,6 +24,6 @@ import Test from "@/pages/Test.vue";
   height: 100%;
 }
 .el-aside{
-
+  height: 100%;
 }
 </style>
