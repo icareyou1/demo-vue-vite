@@ -36,3 +36,10 @@ export const getUserInfo=()=>{
         method:"get",
     })
 }
+//5.获取路由信息
+export const getRouters=()=>{
+    return requests({
+        url:"/sysUser/getRouters",
+        method:"get",
+    })
+}

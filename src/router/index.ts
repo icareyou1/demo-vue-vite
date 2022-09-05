@@ -1,41 +1,56 @@
 import {createRouter,createWebHashHistory} from "vue-router";
 import useStore from "@/store";
+//暴露路由常量
+export const constanRoute=[
+   {
+        name:"Main",
+        path:"/",
+        hidden:true,
+        component:()=>import("@/pages/Main.vue"),
+        children:[
+            {
+                name:"Page1",
+                path:"page1",
+                component:()=>import("@/pages/Page1.vue"),
+            },
+            {
+                name:"Page2",
+                path:"page2",
+                component:()=>import("@/pages/Page2.vue"),
+            },
+            {
+                name:"Page3",
+                path:"page3/:id/:name",
+                component:()=>import("@/pages/Page3.vue"),
+            }
+        ]
+    },
+    {
+        name:"Login",
+        path:"/login",
+        hidden:true,
+        component:()=>import("@/pages/Login.vue"),
+    },
+    {
+        name: "Home",
+        path: "/home",
+        hidden: false,
+        component:"",
+        meta:{
+            name:"首页1",
+            icon:"user"
+        }
+    }
+]
+
 //配置路由
 const router=createRouter({
     history:createWebHashHistory(),
-    routes:[
-        {
-            name:"Main",
-            path:"/",
-            component:()=>import("@/pages/Main.vue"),
-            children:[
-                {
-                    name:"Page1",
-                    path:"page1",
-                    component:()=>import("@/pages/Page1.vue"),
-                },
-                {
-                    name:"Page2",
-                    path:"page2",
-                    component:()=>import("@/pages/Page2.vue"),
-                },
-                {
-                    name:"Page3",
-                    path:"page3/:id/:name",
-                    component:()=>import("@/pages/Page3.vue"),
-                }
-            ]
-        },
-        {
-            name:"Login",
-            path:"/login",
-            component:()=>import("@/pages/Login.vue"),
-        }
-    ]
+    routes:constanRoute
 })
 //配置路由守卫
 router.beforeEach((to,from,next)=>{
-    const {userStore}=useStore()
+    const {userStore,permissionStore}=useStore()
     const token=userStore.getToken()
     //如果有token,还要去login就默认去首页
     //不是去login页面,判断权限
@@ -49,12 +64,16 @@ router.beforeEach((to,from,next)=>{
             if (userStore.getRoleName){
                 next()
             }else {
-
                 //401结果有跳转操作,500没有需要在这里处理
                 userStore.getUserInfo().then(()=>{
-                    next()
-                }).catch(err=>{//后端获取信息失败,提示信息,并注销当前登录
+                    //生成路由
+                    permissionStore.generateRoutes().then(accessRoutes=>{
+                        //此处得到的和后端接口一样的格式,慢于pinia
+                        console.log("----",accessRoutes)
+                        next()
+                    })
 
+                }).catch(err=>{//后端获取信息失败,提示信息,并注销当前登录
                     //logout()请求后端接口虽然会存在错误,但是经过userStore的接口,只会返回正确结果
                     userStore.logout().then(()=>{
                         //@ts-ignore (会执行无效的会话...)
