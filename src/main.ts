@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import {createPinia} from "pinia";
 import router from "@/router";
+import directive from "@/directive";
 // import './style.css'
 //引入element plus 图标
 import * as ElIcons from '@element-plus/icons-vue'
@@ -16,6 +17,7 @@ app.use(router)
 for (const [key, component] of Object.entries(ElIcons)) {
     app.component(key, component)
 }
-
+//挂载自定义指令
+directive(app)
 app.mount('#app');
 

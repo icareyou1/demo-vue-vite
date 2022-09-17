@@ -87,7 +87,6 @@ watch(
       console.log(newValue)
       // console.log(oldValue)
       redirect = newValue.query.redirect;
-      console.log("Login---redirect:",redirect)
     },
     { immediate: true }
 )
@@ -100,7 +99,7 @@ const loginButton=()=>{
       userStore.login(data.user).then((res)=>{
         // console.log("---redirect:",redirect.value)
         //路由跳转
-        $router.push({path:redirect||"/"})
+        $router.push({path:redirect||"/index"})
       }).catch((error)=>{
         //刷新验证码
         getCode()

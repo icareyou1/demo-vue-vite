@@ -3,12 +3,12 @@
     <el-tag
         v-for="(item,index) in tags"
         :key="item.name"
-        :closable="item.name !== 'Home'"
+        :closable="item.name !== 'Index'"
         :effect="$route.name===item.name?'dark':'plain'"
         @click="changeMenu(item)"
         @close="handleClose(item,index)"
     >
-      {{ item.name }}
+      {{ item.meta.name }}
     </el-tag>
   </div>
 </template>
@@ -56,6 +56,7 @@ const handleClose=(item,index)=>{
 <style scoped>
 .tags{
   padding: 10px;
+  box-shadow: 0px 5px 2px -2px gainsboro;
 }
 .el-tag{
   margin-right: 10px;

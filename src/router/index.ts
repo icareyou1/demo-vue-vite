@@ -3,26 +3,39 @@ import useStore from "@/store";
 //暴露路由常量
 export const constanRoute=[
    {
+        //处理只展示子组件
         name:"Main",
-        path:"/",
-        hidden:true,
+        path:"",
+        hidden:false,
         component:()=>import("@/pages/Main.vue"),
+        meta:{
+            /*name:"main",
+            icon: "user",*/
+            //main组件标志
+            mainFlag:true
+        },
         children:[
             {
-                name:"Page1",
-                path:"page1",
-                component:()=>import("@/pages/Page1.vue"),
+                name:"Index",
+                path: "index",
+                hidden: false,
+                component:()=>import("@/pages/index.vue"),
+                meta: {
+                    name: "首页",
+                    icon: "user"
+                }
             },
             {
-                name:"Page2",
-                path:"page2",
-                component:()=>import("@/pages/Page2.vue"),
-            },
-            {
-                name:"Page3",
-                path:"page3/:id/:name",
-                component:()=>import("@/pages/Page3.vue"),
+                name:"UserProfile",
+                path: "user/profile",
+                hidden: false,
+                component:()=>import("@/pages/user/profile/index.vue"),
+                meta: {
+                    name: "个人中心",
+                    icon: "user"
+                }
             }
+
         ]
     },
     {
@@ -31,16 +44,7 @@ export const constanRoute=[
         hidden:true,
         component:()=>import("@/pages/Login.vue"),
     },
-    {
-        name: "Home",
-        path: "/home",
-        hidden: false,
-        component:"",
-        meta:{
-            name:"首页1",
-            icon:"user"
-        }
-    }
+
 ]
 
 //配置路由
@@ -50,6 +54,7 @@ const router=createRouter({
 })
 //配置路由守卫
 router.beforeEach((to,from,next)=>{
+
     const {userStore,permissionStore}=useStore()
     const token=userStore.getToken()
     //如果有token,还要去login就默认去首页
@@ -58,7 +63,7 @@ router.beforeEach((to,from,next)=>{
         /*有token还去登录页,就跳转至首页*/
         if (to.name==="Login"){
             //跳转首页
-            next('/')
+            next('/index')
         }else{
             //如果有角色
             if (userStore.getRoleName){
@@ -67,10 +72,14 @@ router.beforeEach((to,from,next)=>{
                 //401结果有跳转操作,500没有需要在这里处理
                 userStore.getUserInfo().then(()=>{
                     //生成路由
-                    permissionStore.generateRoutes().then(accessRoutes=>{
-                        //此处得到的和后端接口一样的格式,慢于pinia
-                        console.log("----",accessRoutes)
-                        next()
+                    permissionStore.generateRoutes().then((accessRoutes:any)=>{
+                        //在pinia处先处理,返回json数据
+                        accessRoutes.forEach((route:any)=>{
+                            //route为三个大路由,就会和main平级
+                            router.addRoute("Main",route)
+                        })
+                        //如果生成动态路由后,不能直接放行,应该重新来一遍
+                        next({...to})
                     })
 
                 }).catch(err=>{//后端获取信息失败,提示信息,并注销当前登录
@@ -81,10 +90,8 @@ router.beforeEach((to,from,next)=>{
                         //401会失效,会被requests的messagebox卡住  但是500错误不会失效
                         next('/#/login')
                     }).catch(()=>{ //如果500接口就不做操作
-
                     })
                 })
-                next()
             }
         }
     }else {//如果没有token,就直接去登录页

@@ -43,3 +43,18 @@ export const getRouters=()=>{
         method:"get",
     })
 }
+//6.获取树形菜单
+export const treeSelect=()=>{
+    return requests({
+        url:"/sysMenu/treeSelect",
+        method:"get"
+    })
+}
+//7.获取修改角色时,回显选中的菜单
+export const updateRoleShowTreeSelect=(params:any)=>{
+    return requests({
+        url:"/sysMenu/updateRoleShowTreeSelect",
+        params:params,
+        method:"get"
+    })
+}

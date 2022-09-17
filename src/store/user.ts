@@ -53,14 +53,12 @@ export default defineStore("user",{
         //注销用户
         logout(){
             return new Promise((resolve,reject)=>{
-
                 //done 清除数据和 若依逻辑有所不同
                 logout().then(res=>{
                     //这里不能放在外面,不然发送请求就会被拦截到没有token
                     this.clearToken()
                     this.roleName=""
                     this.permissions=[]
-                    console.log(res)
                     resolve(res)
                 }).catch(error=>{  //500接口拦截不到
                     //提前拦截只会返回正确结果
@@ -74,7 +72,6 @@ export default defineStore("user",{
                 getUserInfo().then(res=>{
                     const user=res.data.pageUser
                     const avatar=(user.avatar==""||user.avatar==null)?defAva:user.avatar
-                    console.log("avatar",avatar)
                     //如果有角色信息,存入角色和权限
                     // console.log(res.data.roleName,"======")
                     if (res.data.roleName){

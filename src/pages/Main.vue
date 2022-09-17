@@ -1,14 +1,11 @@
 <template>
   <el-container>
-
     <el-aside width="auto"><Aside></Aside></el-aside>
-
     <el-container>
-      <el-header><Header></Header></el-header>
+      <el-header style="padding: 0px"><Header></Header></el-header>
       <Tag></Tag>
-      <el-main></el-main>
+      <el-main><router-view></router-view></el-main>
     </el-container>
-
   </el-container>
 </template>
 
@@ -16,7 +13,6 @@
 import Aside from "@/components/Aside/index.vue"
 import Header from  "@/components/Header/index.vue"
 import Tag from "@/components/Tag/index.vue"
-import Test from "@/pages/Test.vue";
 </script>
 
 <style scoped lang="less">

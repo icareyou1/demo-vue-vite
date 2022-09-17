@@ -11,10 +11,12 @@ export default defineStore("tab",{
             isCollapse:false,
             tabsList:[
                 {
-                    name:"Home",
-                    path:"/",
-                    label:"首页",
-                    icon:"home"
+                    name:"Index",
+                    path:"/index",
+                    meta:{
+                        name:"首页",
+                        icon:"user"
+                    }
                 }
             ],
             currentMenu:null
@@ -29,9 +31,8 @@ export default defineStore("tab",{
         },
         //侧边栏路由跳转
         selectMenu(val:any){
-            console.log("++++",val)
-            //如果选中的不是home
-            if (val.name!=="Home"){
+            //如果选中的不是Index
+            if (val.name!=="Index"){
                 this.currentMenu=val
                 const result=this.tabsList.findIndex((item:any)=>item.name===val.name)
                 if (result ===-1){
@@ -45,6 +46,19 @@ export default defineStore("tab",{
         closeTag(val:any){
             const result=this.tabsList.findIndex((item:any)=>item.name===val.name)
             this.tabsList.splice(result,1)
+        },
+        //退出时初始化tab
+        initMenu(){
+            this.tabsList=[{
+                name:"Index",
+                path:"/index",
+                meta:{
+                    name:"首页",
+                    icon:"user"
+                }
+            }];
+            this.isCollapse=false;
+            this.currentMenu=null;
         }
     },
     //类似组件的computed,用来封装计算属性,有缓存功能

@@ -5,12 +5,13 @@
     <h3>{{isCollapse?"风创":"风创防雷监测系统"}}</h3>
   </div>
   <el-scrollbar>
+    <!--background-color 不要使用@asideBackgroundColor 不然el-menu折叠效果失效,血的教训-->
     <el-menu
         default-active="/"
         class="el-menu-vertical-demo"
         :collapse="isCollapse"
         text-color="#ffffff"
-        background-color="@asideBackgroundColor"
+        background-color="#304156"
         active-text-color="#ffd04b"
     >
       <AsideItem v-for="(item,index) in menuRoutes" :item="item" :key="item.path+index"></AsideItem>
@@ -48,7 +49,6 @@ const isCollapse=computed(()=>{
 })
 //获取路由
 const menuRoutes=computed(()=>permissionStore.getMenuRoutes)
-console.log("!!!",menuRoutes)
 </script>
 
 
@@ -57,7 +57,29 @@ console.log("!!!",menuRoutes)
 .el-menu{
   height: 100%;
   border: none;
+  ::v-deep{
+
+    .el-sub-menu-item:hover{
+      background-color: red;
+    }
+    .el-menu-item:hover{
+      background-color: red;
+    }
+    .is-active{
+      background-color: green;
+    }
+  }
 }
+
+
+/**
+--el-menu-text-color默认状态下字体颜色
+--el-menu-hover-text-color悬停状态下字体颜色
+--el-menu-active-color激活状态下字体颜色
+--el-menu-bg-color整个菜单栏背景色
+--el-menu-hover-bg-color菜单item悬停状态下背景色
+ */
+
 /*
 修改悬浮样式,二级菜单暂时不好实现
 .el-sub-menu:hover{
