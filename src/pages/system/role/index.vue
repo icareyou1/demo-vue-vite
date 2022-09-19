@@ -43,7 +43,7 @@
     </el-form>
 
     <!--按钮栏目-->
-    <el-row :gutter="10" class="mb8">
+    <el-row :gutter="10" style="margin-bottom: 8px">
       <el-col :span="1">
         <el-button
             type="primary"
@@ -78,7 +78,9 @@
 
       <!--右侧的图标-->
       <el-col :offset="20" :span="1">
-        <!--placement: 提示出现的地方-->
+        <!--placement: 提示出现的地方
+            item:原有样式
+        -->
         <el-tooltip class="item" effect="dark" :content="data.searchShow.showSearch ? '隐藏搜索' : '显示搜索'" placement="top">
           <el-button circle icon="Search" @click="toggleSearch()" />
         </el-tooltip>
@@ -96,7 +98,9 @@
       <el-table-column label="角色编号" prop="roleId" width="120" />
       <!--show-overflow-tooltip	     当内容过长被隐藏时显示tooltip-->
       <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="150" />
-      <!--todo 需要增加prop吗?-->
+      <!--done 需要增加prop吗?
+          当不显示状态时,应该不显示
+      -->
       <el-table-column label="状态" align="center" width="100">
         <template #default="scope">
           <!--active-value   激活时的值
@@ -181,7 +185,6 @@
             :layout="data.paginationShow.layout"
             :total="data.paginationShow.total"
             :page-sizes="data.paginationShow.pageSizes"
-            :page-count="data.paginationShow.pagerCount"
              v-model:current-page="currentPage"
              v-model:page-size="pageSize"
         />
@@ -201,7 +204,7 @@
                 v-for="dict in data.searchShow.selectOption"
                 :key="dict.value"
                 :label="dict.value"
-            >{{ dict.label }}</el-radio>
+            >{{ dict.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -326,7 +329,7 @@ const data=reactive({
   //列表部分
   tableShow:{
     //表格是否在加载
-    loading:false,
+    loading:true,
     //角色表
     roleList:[],
     //选中的id值
@@ -340,7 +343,7 @@ const data=reactive({
     //选择每页展示的数量
     pageSizes:[1,5,10,20,50,100],
     //展示多少页码按钮,移动端默认5个
-    pageCount:document.body.clientWidth<992?5:7
+    // pageCount:document.body.clientWidth<992?5:7
   },
   //弹出框
   dialogShow:{
@@ -360,7 +363,7 @@ const data=reactive({
     orgOptions:[]
   }
 })
-//同时会处理当前页码变化的情况
+//done 同时会处理当前页码变化的情况
 const currentPage=computed({
   get(){
     return data.queryParams.pageNum
@@ -370,7 +373,7 @@ const currentPage=computed({
     getList()
   }
 })
-//同时会处理 展示数量 的变化的事件
+//done 同时会处理 展示数量 的变化的事件
 const pageSize =computed({
   get(){
     return data.queryParams.pageSize

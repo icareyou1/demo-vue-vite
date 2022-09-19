@@ -147,17 +147,17 @@
         <!--列表栏目-->
         <el-table v-loading="data.right.tableShow.loading" :data="data.right.tableShow.userList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="用户编号" align="center" key="userId" prop="userId"/>
-          <el-table-column label="用户名称" align="center" key="userName" prop="userName"/>
-          <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName"/>
-          <el-table-column label="性别" align="center" key="gender" prop="gender">
+          <el-table-column label="用户编号" align="center" prop="userId"/>
+          <el-table-column label="用户名称" align="center" prop="userName"/>
+          <el-table-column label="用户昵称" align="center" prop="nickName"/>
+          <el-table-column label="性别" align="center">
             <template #default="scope">
               {{scope.row.gender=="0"?"男":"女"}}
             </template>
           </el-table-column>
-          <el-table-column label="组织" align="center" key="orgName" prop="sysOrg.orgName"/>
-          <el-table-column label="手机号码" align="center" key="phoneNumber" prop="phoneNumber" width="120" />
-          <el-table-column label="状态" align="center" key="status">
+          <el-table-column label="组织" align="center" prop="sysOrg.orgName"/>
+          <el-table-column label="手机号码" align="center" prop="phoneNumber" width="120" />
+          <el-table-column label="状态" align="center">
             <template #default="scope">
               <el-switch
                   v-model="scope.row.status"
@@ -178,39 +178,47 @@
             <template #default="scope">
               <el-tooltip content="修改" placement="top" v-if="scope.row.userId !== 10010">
                 <el-button
-                    type="text"
+                    type="primary"
+                    link
                     icon="Edit"
                     @click="handleUpdate(scope.row)"
                     v-hasPerm="['system:user:update']"
-                ></el-button>
+                >修改</el-button>
               </el-tooltip>
               <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 10010">
                 <el-button
-                    type="text"
+                    type="primary"
+                    link
                     icon="Delete"
                     @click="handleDelete(scope.row)"
                     v-hasPerm="['system:user:delete']"
-                ></el-button>
+                >删除</el-button>
               </el-tooltip>
               <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 10010">
                 <el-button
-                    type="text"
+                    type="primary"
+                    link
                     icon="Key"
                     @click="handleResetPassword(scope.row)"
                     v-hasPerm="['system:user:update']"
-                ></el-button>
+                >重置密码</el-button>
               </el-tooltip>
             </template>
           </el-table-column>
         </el-table>
         <!--分页部分-->
-<!--        <pagination
-            v-show="total > 0"
-            :total="total"
-            v-model:page="queryParams.pageNum"
-            v-model:limit="queryParams.pageSize"
-            @pagination="getList"
-        />-->
+        <div v-show="data.right.paginationShow.total>0" class="pagination-container">
+          <el-config-provider :locale="zhCn">
+            <el-pagination
+                :background="true"
+                :layout="data.right.paginationShow.layout"
+                :total="data.right.paginationShow.total"
+                :page-sizes="data.right.paginationShow.pageSizes"
+                v-model:current-page="currentPage"
+                v-model:page-size="pageSize"
+            ></el-pagination>
+          </el-config-provider>
+        </div>
       <!--  添加用户或修改用户对话框-->
         <el-dialog :title="data.right.dialogShow.title" v-model="data.right.dialogShow.open" width="600px">
           <el-form :model="data.form" :rules="data.right.rules" ref="userRef" label-width="80px">
@@ -330,6 +338,7 @@ import {
 } from "@/api/user";
 import {addDateRangePlus,parseTime} from "@/utils";
 import {ElMessageBox} from "element-plus";
+import zhCn from "element-plus/lib/locale/lang/zh-cn"
 
 const data=reactive({
   form:{}as any,
@@ -405,6 +414,31 @@ const data=reactive({
     }
   }
 })
+//done 处理当前页码变化情况
+const currentPage=computed({
+  get(){
+    return data.queryParams.pageNum
+  },
+  set(val){
+    data.queryParams.pageNum=val
+    getList()
+  }
+})
+//done 处理每页展示数量变化操作
+const pageSize=computed({
+  get(){
+    return data.queryParams.pageSize
+  },
+  set(val){
+    data.queryParams.pageSize=val
+    if (currentPage.value*val>data.right.paginationShow.total){
+      currentPage.value=1
+    }
+    getList()
+  }
+})
+
+
 const orgTreeRef:any=ref(null);
 //done 左侧 组织栏查询下拉树结构
 const getOrgTree = () => {
@@ -562,7 +596,7 @@ const handleDelete = (row:any) => {
     })
   }).catch(()=>{})
 }
-//todo 重置密码
+//done 重置密码
 const handleResetPassword=(row:any)=>{
   ElMessageBox.prompt('请输入"'+row.userName+"'的新密码","提示",{
     confirmButtonText:"确定",
@@ -612,5 +646,21 @@ getList();
 </script>
 
 <style scoped lang="less">
-
+//分页部分样式
+.pagination-container{
+  height: 36px;
+  margin-bottom: 10px;
+  margin-top: 15px;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: flex-end
+}
+/* tree border */
+.tree-border {
+  margin-top: 5px;
+  border: 1px solid #e5e6e7;
+  background: #FFFFFF none;
+  border-radius:4px;
+  width: 100%;
+}
 </style>
