@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --open",
+    "dev": "vite --host 192.168.0.100",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview"
   },

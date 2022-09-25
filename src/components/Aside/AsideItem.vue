@@ -14,7 +14,7 @@
     <!--不为main路由-->
     <template v-else>
       <!--一级菜单的处理-->
-      <el-menu-item v-if="!item.children" :key="item.path" :index="item.path" @click="clickMenu(item)">
+      <el-menu-item v-if="!item.children.length" :key="item.path" :index="item.path" @click="clickMenu(item)">
         <el-icon>
           <component :is="item.meta.icon"></component>
         </el-icon>

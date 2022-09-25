@@ -152,7 +152,7 @@
           <el-table-column label="用户昵称" align="center" prop="nickName"/>
           <el-table-column label="性别" align="center">
             <template #default="scope">
-              {{scope.row.gender=="0"?"男":"女"}}
+              {{scope.row.gender=="0"?"男":(scope.row.gender=="1"?"女":"")}}
             </template>
           </el-table-column>
           <el-table-column label="组织" align="center" prop="sysOrg.orgName"/>
@@ -327,7 +327,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, reactive, ref, watch,} from "vue";
+import {computed, reactive, ref, watch,} from "vue";
 import {
   addUser, delUser,
   getRolesForAddUser,
@@ -540,6 +540,7 @@ const handleStatusChange=(row:any)=>{
 const userRef:any=ref(null);
 //done 重置表单
 const reset=()=>{
+  //两个时间,头像,删除
   data.form={
     userId:undefined,
     userName:undefined,

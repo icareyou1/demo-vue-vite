@@ -50,7 +50,7 @@
             plain
             icon="Plus"
             @click="handleAdd"
-            v-hasPerm="['device:manage:add']"
+            v-hasPerm="['device:tag:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1">
@@ -60,7 +60,7 @@
             icon="Edit"
             :disabled="data.buttonShow.updateDisabled"
             @click="handleUpdate"
-            v-hasPerm="['device:manage:update']"
+            v-hasPerm="['device:tag:update']"
         >修改</el-button>
       </el-col>
       <el-col :span="1">
@@ -70,7 +70,7 @@
             icon="Delete"
             :disabled="data.buttonShow.deleteDisabled"
             @click="handleDelete"
-            v-hasPerm="['device:manage:delete']"
+            v-hasPerm="['device:tag:delete']"
         >删除</el-button>
       </el-col>
       <!--右侧图标-->
@@ -114,7 +114,7 @@
                 link
                 icon="Edit"
                 @click="handleUpdate(scope.row)"
-                v-hasPerm="['device:manage:update']"
+                v-hasPerm="['device:tag:update']"
             >修改</el-button>
           </el-tooltip>
 
@@ -124,7 +124,7 @@
                 link
                 icon="Delete"
                 @click="handleDelete(scope.row)"
-                v-hasPerm="['device:manage:delete']"
+                v-hasPerm="['device:tag:delete']"
             >删除</el-button>
           </el-tooltip>
 
@@ -134,7 +134,7 @@
                 link
                 icon="User"
                 @click="handleTagDevice(scope.row)"
-                v-hasPerm="['device:manage:update']"
+                v-hasPerm="['device:tag:update']"
             >标记设备</el-button>
           </el-tooltip>
         </template>
@@ -296,7 +296,7 @@ const resetQuery=()=>{
 }
 const tagRef:any=ref(null)
 const deviceRef:any=ref(null)
-//todo 重置表单
+//done 重置表单
 const reset = () => {
   if (deviceRef.value!=undefined){
     //所有选中的设备
@@ -330,7 +330,7 @@ const getList=()=>{
   })
 }
 //done 新增按钮
-const handleAdd=(row:any)=>{
+const handleAdd=()=>{
   reset();
   data.dialogShow.open=true;
   data.dialogShow.title="添加标签";

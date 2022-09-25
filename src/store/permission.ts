@@ -20,7 +20,8 @@ export default defineStore("permission",{
                     const asideRoutes=filterAsyncRouter(asideData);
                     const rewriteRoutes=filterAsyncRouter(rewriteData);
                     // @ts-ignore
-                    this.menuRoutes=constanRoute.concat(asideRoutes)
+                    this.menuRoutes=constanRoute.concat(asideRoutes) //[Main,login,monitor,device,system]
+
                     //返回的会放在main路由成为子路由
                     resolve(rewriteRoutes)
                 })
